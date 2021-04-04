@@ -1,0 +1,60 @@
+
+
+
+
+
+.active_page:hover,.inactive_page:hover
+{
+  background-color: rgb(218, 119, 5)!important;
+	color: white;
+}
+
+.active_page
+{
+  background-color: green!important;
+	color: white!important;      
+}
+
+.inactive_page
+{
+    color:#fff;    
+}
+
+  .error_msg {
+    text-align: center;
+    margin: 90px;
+    margin-left: 0px; 
+    padding: 10px; 
+    width: 100%;
+    top:0;    
+    position: fixed;
+    z-index: 997;
+    display: none;
+  }
+
+  .success_msg {
+    text-align: center;
+    margin: 90px;
+    margin-left: 0px;  
+    padding: 10px; 
+    width: 100%;
+    top:0;    
+    position: fixed;
+    z-index: 999;
+    display: none;
+  }
+/* jquery confirm box styling */
+form#confirm_form label{
+  font-size:15pt;
+  text-align: center;
+}
+
+form#confirm_form input{
+  width: 100%;
+  font-size:16pt;
+}
+
+form#confirm_form .form-group{
+  width: 100%;
+  font-size:16pt;
+}

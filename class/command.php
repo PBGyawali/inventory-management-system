@@ -14,34 +14,24 @@ class command extends ims{
 	function fill_supplier_list($value=null){
 		return $this->fill_list('supplier',$value,'name');
 	}
-	function fill_tax_list($value=null){
-		
+	function fill_tax_list($value=null){		
 		return $this->fill_list('tax',$value,'percentage');
 	}
 	function fill_unit_list($value=null){
 		return $this->fill_list('unit',$value,'name');
 	}
 	function fill_list($category,$value,$columm=null,$status='active',$category_id=null)
-	{ 	
-		$this->query ="SELECT * FROM $category ";
-		if ($status||$category_id)
-		$this->query .= " WHERE ";
-		if ($status)
-		$this->query .= " $category"."_status= '$status'";
-		if ($status && $category_id)
-		$this->query .= " AND ";
-		if($category_id)
-			$this->query .= " category_id = ? ";		
-		$this->query .= " ORDER BY $category"."_name"." ASC	";
-		$this->execute(array($category_id));
-		$result = $this->statement_result();
+	{ 
+		$placeholder=$condition=array();
+		if($status)			{	$placeholder[]=$category."_status";	$condition[]=$status;		}
+		if($category_id)	{	$placeholder[]=" category_id";		$condition[]=$category_id;	}
+		$result = $this->getAllArray($category,$placeholder,$condition,'AND','',$category."_name",'ASC');;
 		$output = '';		
 		$selected_value = $value;// value from database	
 		$output .= '<option value="" selected hidden disabled> Select '.ucwords($category).'</option>';
 		foreach($result as $row)
 		{	
-			if ($category=='product' && $status==NULL && $value==NULL)
-			{
+			if ($category=='product' && $status==NULL && $value==NULL){
 				$productquantity=$this->available_product_quantity($row['product_id']);
 				if( $productquantity<=0)
 				$disabled="disabled";
@@ -106,17 +96,12 @@ class command extends ims{
 		return $available_quantity;
 	}		
 	function get_product_quantity($product_id,$table){		
-		$this->query="SELECT inventory_".$table."_product.quantity FROM inventory_".$table."_product 
-		LEFT JOIN inventory_".$table." ON inventory_".$table.".inventory_".$table."_id = inventory_".$table."_product.inventory_".$table."_id
-		WHERE inventory_".$table."_product.product_id = ? AND inventory_".$table.".inventory_".$table."_status = 'active'	";
-		$this->execute(array($product_id));
-		$result = $this->statement_result();
-		$total = 0;
-		foreach($result as $row){
-			$total += $row['quantity'];
-		}
-		return $total;
-	}
+		$join=array('LEFT JOIN'=>array('inventory_'.$table=>"inventory_".$table.".inventory_".$table."_id 
+				= inventory_".$table."_product.inventory_".$table."_id"));
+		return $this->total("inventory_".$table."_product","inventory_".$table."_product.quantity",
+		array("inventory_".$table."_product.product_id","inventory_".$table.".inventory_".$table."_status"),
+		array($product_id,'active'),'AND',$join);
+	}	
 	
 }
 ?>

@@ -57,7 +57,7 @@ class graphs extends ims{
 		if($type=='number')
 			return $this->CountTable('inventory_'.$table,'MONTH(inventory_'.$table.'_created_date)',$value);
 		else
-			return $this->total('inventory_'.$table,'inventory_'.$table.'_total','MONTH(inventory_'.$table.'_created_date)',$value);
+			return $this->total('inventory_'.$table,'inventory_'.$table.'_sub_total','MONTH(inventory_'.$table.'_created_date)',$value);
 	}
 
 
@@ -90,15 +90,15 @@ class graphs extends ims{
 		$value=array();
 		$category_ids=$this->get_category('','true');
 		foreach($category_ids as $category_id){			
-			$sum=$this->total('product','product_quantity','category_id',$category_id);
-			array_push($value,$quote .$sum.$quote);
+			$attr['implodehere']='true';
+			$sum=$this->total('product',array('product_quantity','opening_stock'),'category_id',$category_id,'','',$attr);			
+			$difference=$this->total('product','defective_quantity','category_id',$category_id,'','',$attr);
+			array_push($value,$quote .($sum-$difference).$quote);
 		}
 		if ($quote)
 			return implode(',',$value);
 		return $value;				
-	}
-
-	
+	}	
 }
 
 

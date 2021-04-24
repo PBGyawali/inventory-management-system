@@ -8,22 +8,31 @@ class stats extends ims{
 	function get_user_wise_total_purchase(){	
 		return $this->get_user_wise_total('purchase');
 	}
-	function get_user_wise_total($table)
+	function get_user_wise_total($table,$debug=false)
 	{	
-		$currency=$this->website_currency_symbol();
-		$this->query="SELECT sum(inventory_".$table.".inventory_".$table."_total) as ".$table."_total, 
-		SUM(CASE WHEN inventory_".$table.".payment_status = 'cash' THEN inventory_".$table.".inventory_".$table."_total ELSE 0 END) AS cash_".$table."_total, 
-		SUM(CASE WHEN inventory_".$table.".payment_status = 'credit' THEN inventory_".$table.".inventory_".$table."_total ELSE 0 END) AS credit_".$table."_total, 
-		user.user_name,user.user_id	FROM inventory_".$table." INNER JOIN user ON user.user_id = inventory_".$table.".user_id 
-		WHERE inventory_".$table.".inventory_".$table."_status = 'active' GROUP BY inventory_".$table.".user_id	";
-		$this->execute();
-		$result = $this->statement_result();
+		$currency=$this->website_currency_symbol();				
+		$sum=array(
+			'SUM('=>array(
+				"inventory_".$table.".inventory_".$table."_sub_total"=>$table."_total",
+			"CASE WHEN inventory_".$table.".payment_status = 'cash' 
+			THEN inventory_".$table.".inventory_".$table."_sub_total ELSE 0 END"=>"cash_".$table."_total",
+			"CASE WHEN inventory_".$table.".payment_status = 'credit' 
+			THEN inventory_".$table.".inventory_".$table."_sub_total ELSE 0 END"=>"credit_".$table."_total"
+		),
+			'(user.'=>array('user_name'=>'user_name','user_id'=>'user_id')	
+		);
+		$join=array(
+			'INNER JOIN'=>array('user'=>'user.user_id=inventory_'.$table.'.user_id')
+		);
+		$attr['groupby']="inventory_".$table.".user_id	";
+		$result =$this->total('inventory_'.$table,$sum,'inventory_'.$table.'.inventory_'.$table.'_status','active','',$join,$attr);
+			
 		 $output = '
 		<div class="table-responsive">
 			<table class="table table-bordered table-striped">
 				<tr>
-					<th class="text-center">User Name</th>
-					<th class="text-center">Total  Transaction</th>
+					<th class="text-center">Name</th>
+					<th class="text-center">Total  Deals</th>
 					<th class="text-center">Total '.$table.' Value</th>
 					<th class="text-center">Total Cash '.$table.'</th>
 					<th class="text-center">Total Credit '.$table.'</th>
@@ -80,7 +89,7 @@ class stats extends ims{
 		if ($item=='sales')
 			$status=$this->CountTable('inventory_sales',$column,$value);
 		else
-			$status=$this->total('inventory_sales','inventory_sales_total',$column,$value);
+			$status=$this->total('inventory_sales','inventory_sales_sub_total',$column,$value);
 		$current_status=($status/$target)*100;		 
 		 if($current_status>100)
 		 	return 100;

@@ -1,5 +1,5 @@
 <?php
-	class select{
+	class select extends command{
 
 		function fill_category_list($value=null){
 			return $this->fill_list('category',$value);

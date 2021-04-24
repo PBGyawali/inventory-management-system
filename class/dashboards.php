@@ -62,65 +62,50 @@ class dashboards extends ims{
 	function count_total_credit_expense_value(){
 		return $this->count_transaction_value('purchase','credit','active');	
 	}	
-	function count_transaction_value($table,$type=null,$active=null){ 	
-		$this->query ="SELECT IFNULL(SUM(inventory_".$table."_total), 0) AS total FROM inventory_".$table;
-		if ($active||$type||!$this->is_admin())
-			$this->query .= " WHERE ";
-		if($active)		
-			$this->query .= " inventory_".$table."_status='active' ";		
-		if($type)
-		{
-			if($active)
-				$this->query .= " AND  ";
-			$this->query .= "  payment_status =? ";
-		}
-		if(!$this->is_admin())
-		{
-			if ($active||$type)
-				$this->query .= " AND  ";			
-			$this->query .= ' user_id = "'.$_SESSION["user_id"].'"';
-		}	
-		$this->execute(array($type));
-		return number_format($this->row_count(),2);
-	}	
-		
+	function count_transaction_value($table,$type=null,$active=null){ 
+		$placeholder=$condition=array();
+		if($active)			{	$placeholder[]=" inventory_".$table."_status";	$condition[]='active';		}
+		if($type)	{	$placeholder[]=" payment_status";		$condition[]=$type;	}
+		if(!$this->is_admin()){	$placeholder[]=" user_id";		$condition[]=$_SESSION["user_id"];		}
+		$result= $this->total("inventory_".$table,"inventory_".$table."_sub_total",$placeholder,$condition,'AND',);
+		return number_format($result,2);
+	}		
 			
-	function Get_total_today_sales()
-	{
-		return $this->Get_sales_value('inventory_sales_created_date)');
+	function Get_total_today_sales(){
+		return $this->Get_sales_value('inventory_sales_created_date');
 	}
 
-	function Get_total_yesterday_sales()
-	{
-		return $this->Get_sales_value('inventory_sales_created_date)',1);
+	function Get_total_yesterday_sales(){
+		return $this->Get_sales_value('inventory_sales_created_date',1);
 	}
 
-	function Get_last_seven_day_total_sales()
-	{		
-		return $this->Get_sales_value('inventory_sales_created_date)>',7);
+	function Get_last_seven_day_total_sales(){		
+		return $this->Get_sales_value('inventory_sales_created_date',7,'>');
 	}
 
-	function Get_total_sales()
-	{		
+	function Get_total_sales(){		
 		return $this->Get_sales_value();
 	}
 
-	function Get_sales_value($date=null,$interval=null)
-	{
-		$this->query = "SELECT Count(*) FROM inventory_sales " ;
-		if ($date||$interval||!$this->is_admin() )
-		$this->query .= " WHERE ";
-		if ($date)		
-		$this->query .= " DATE($date= DATE(NOW()) ";
-		if($interval)
-		$this->query .= " - INTERVAL $interval DAY ";
-		if (!$this->is_admin()&& $date)		
-		$this->query .= " AND ";
-		if(!$this->is_admin())		
-			$this->query .= "  user_id ='".$_SESSION["user_id"]."'";		
-		$this->execute();
-		return $this->row_count();
+	function Get_sales_value($date=null,$interval=null,$sign=null){
+		$condition=$value=$combine=$compare=array();	
+		if ($date){		
+			$condition[]= 'DATE('.$date.')';$value[]=DATE($this->get_datetime());
+			$combine[]=$interval?' - ':(!$this->is_admin()?' and ':'');$compare[]=$sign?$sign.'=':'=';
+		}
+		if($interval){	
+			$condition[]=' INTERVAL ';$value[]=$interval ;
+			$combine[]=!$this->is_admin()?' DAY  AND ':' DAY ';	$compare[]=' ';
+		}		
+		if(!$this->is_admin()){		
+			$condition[]=' user_id';	$value[]=$_SESSION["user_id"];
+			$combine[]=' ';	$compare[]='=';
+		}		
+		
+		return $this->CountTable('inventory_sales',$condition,$value,$combine,$compare);
 	}
+
+
 	
 	}
 

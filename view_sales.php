@@ -16,13 +16,9 @@ elseif(isset($_GET["pdf"]) && isset($_GET['sales_id']))
 	{
 		header('location:'.$ims->login);
 	}
-	$output = '';
-	$ims->query = "	SELECT * FROM company_table	";
-	$ims->execute();
-	$data=$ims->get_array();
-	$ims->query ="SELECT * FROM inventory_sales WHERE inventory_sales_id = ? LIMIT 1	";
-	$ims->execute(array( $_GET["sales_id"]));
-	$row = $ims->get_array();
+	$output = '';	
+	$data=$ims->getArray( "company_table");
+	$row = $ims->getArray( "inventory_sales",'inventory_sales_id',$_GET["sales_id"],'',1);
 	$output .='
 	<table width="100%" border="1"  cellpadding="5" cellspacing="0">
 		<tr>
@@ -77,9 +73,7 @@ elseif(isset($_GET["pdf"]) && isset($_GET['sales_id']))
 		';
 
 		
-		$ims->query ="SELECT * FROM inventory_sales_product WHERE inventory_sales_id = :inventory_sales_id";
-		$ims->execute(	array(':inventory_sales_id' =>  $_GET["sales_id"]));
-		$product_result = $ims->statement_result();
+		$product_result = $ims->getAllArray('inventory_sales_product','inventory_sales_id',$_GET["sales_id"]);
 		$count = 0;
 		$total = 0;
 		$total_actual_amount = 0;

@@ -11,7 +11,7 @@ if(!$ims->is_admin())
 include_once(INC.'header.php');
 ?>
 
-		<span id="alert_action"></span>
+		<span class="position-absolute w-100 text-center" id="message"style="z-index:10"></span>
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="card card-secondary">
@@ -107,12 +107,9 @@ $(document).ready(function(){
 					$('#form_message').html(data.error);
 				else{
 					$('#category_form')[0].reset();
-					$('#categoryModal').modal('hide');
-					$('#alert_action').fadeIn().html(data);
-					categorydataTable.ajax.reload();						
-				}
-				timeout();
-				
+					$('#categoryModal').modal('hide');					
+					showMessage(datatable,data.success);						
+				}				
 			}
 		})
 	});
@@ -137,7 +134,7 @@ $(document).ready(function(){
 		})
 	});
 
-	var categorydataTable = $('#category_data').DataTable({
+	var datatable = $('#category_data').DataTable({
 		"processing":true,
 		"serverSide":true,
 		"order":[],
@@ -162,7 +159,7 @@ $(document).ready(function(){
 			var status = $(this).data("status");
 			var btn_action = "delete";	
 			var data={category_id:category_id, status:status, btn_action:btn_action};
-			disable(url,categorydataTable,data,'change the status');    
+			disable(url,datatable,data,'change the status');    
   	});
 
 

@@ -29,7 +29,7 @@ include_once(INC.'header.php');
                     <h1 class="h3 mb-4 text-gray-800"><?php echo ($setup)?'System Configuration':'Setting'?></h1>
 
                     <!-- DataTales Example -->
-                    <span id="message"></span>
+                    <span class="position-absolute text-center w-100"id="message" style="z-index:10;"></span>
                     <form method="post" class="setting_form" id="setting_form" enctype="multipart/form-data" action="<?php echo SERVER_URL?>setting_action.php">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
@@ -114,6 +114,7 @@ include_once(INC.'header.php');
                             </div>
                         </div>
                     </form>
+                    <?php include_once(INC.'footer.php');?>
               
 <script>
 $(document).ready(function(){
@@ -143,9 +144,7 @@ $(document).ready(function(){
                 },
                 complete:function(){
                     $button.attr('disabled', false).html(buttonvalue);
-                    setTimeout(function(){
-				        $('#message').slideup();
-				    }, 5000);
+                    timeout()
                 },
 				success:function(data){	
                     $('.file_upload').val('');           						

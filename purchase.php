@@ -4,20 +4,36 @@ include_once(INC.'init.php');
 
 if(!$ims->is_login())
     header("location:".$ims->login);
-
 include_once(INC.'header.php');
 ?>
-	<span id="alert_action"></span>
+	<span class="position-absolute w-100 text-center" id="message"style="z-index:10"></span>
 	<div class="row">
 		<div class="col-lg-12">
 			
 			<div class="card card-secondary">
                 <div class="card-header">
                 	<div class="row">
-                    	<div class="col-lg-10 col-md-10 col-sm-8 col-xs-6">
+                    	<div class="col-6 col-sm-4">
                             <h3 class="card-title">Purchase List</h3>
-                        </div>
-                        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6 text-right" >
+						</div>
+						<div class="col-sm-4">
+							<form action="" method="post" id="reportdata">
+	            				<div class="row input-daterange">
+	            					<div class="col-md-6">
+		            					<input type="date" name="startDate" id="startDate" class="form-control form-control-sm"  />
+		            				</div>
+		            				<div class="col-md-6">
+		            					<input type="date" name="endDate" id="endDate" class="form-control form-control-sm"   />
+		            				</div>
+		            			</div>
+							</div>
+							<div class="col-md-2">
+	            				<button type="submit" name="filter" id="filter" title="Get Report"class="btn btn-info btn-sm"><i class="fas fa-filter"></i></button>
+	            				&nbsp;
+	            				<button type="button" name="refresh" id="refresh" class="btn btn-secondary btn-sm"><i class="fas fa-sync-alt"></i></button>
+	            			</div>
+							</form>
+                        <div class="col-4 col-sm-2 text-right" >
                             <button type="button" name="add" id="add_button" class="btn btn-success btn-sm"><i class="fa fa-plus"></i> Add</button>    	
                         </div>
                     </div>
@@ -66,7 +82,7 @@ include_once(INC.'header.php');
 							<div class="col-md-6">
 								<div class="form-group">
 									<label>Date</label>
-									<input type="text" name="inventory_purchase_date" id="inventory_purchase_date" class="form-control datepicker" autocomplete="off" required />
+									<input type="date" name="inventory_purchase_date" id="inventory_purchase_date" class="form-control" autocomplete="off" required />
 								</div>
 							</div>
 						</div>
@@ -95,21 +111,10 @@ include_once(INC.'header.php');
     			</div>
     		</form>
     	</div>
-
-    </div>
-		
-	<script type="text/javascript" src="<?php echo JS_URL?>bootstrap-datepicker.js"></script>
-	<link rel="stylesheet" type="text/css" href="<?php echo CSS_URL?>datepicker.css"/>
+    </div>		
 	<script type="text/javascript">
     $(document).ready(function(){        
-		$('.datepicker').datepicker({
-			todayBtn: "linked",
-			format: "yyyy-mm-dd",
-			autoclose: true
-		})
-		
 		var url=$('#purchase_form').attr('action');
-
 		var product_list;		
 			$.ajax({
 			'type': "POST",
@@ -128,7 +133,7 @@ include_once(INC.'header.php');
 				product_list = response;								
 			}		
 		
-    	var purchasedataTable = $('#purchase_data').DataTable({
+    	var datatable = $('#purchase_data').DataTable({
 			"processing":true,
 			"serverSide":true,
 			"order":[],
@@ -210,9 +215,7 @@ include_once(INC.'header.php');
 				success:function(data){
 					$('#purchase_form')[0].reset();
 					$('#purchaseModal').modal('hide');
-					$('#alert_action').fadeIn().html(data);					
-					timeout();
-					purchasedataTable.ajax.reload();
+					showMessage(datatable,data)
 				}
 			});
 		});
@@ -246,8 +249,63 @@ include_once(INC.'header.php');
 			var status = $(this).data("status");
 			var btn_action = "delete";	
 			var data={inventory_purchase_id:inventory_purchase_id, status:status, btn_action:btn_action};
-			disable(url,purchasedataTable,data,'change the status');    
+			disable(url,datatable,data,'change the status');    
   	});
+
+
+
+	  $('#reportdata').on('submit', function(event){
+		event.preventDefault();
+		var data  = new FormData(this);
+		data.append('table','purchase')
+		$.ajax({
+			url:'server/getOrderReport.php',
+			method:"POST",
+			data:data,
+			dataType:'text',
+			contentType:false,
+			processData:false,
+			success:function(data)
+			{				
+				printReport(data )
+			}
+		})
+	});
+	  function printReport(response) {
+	var mywindow = window.open('', '', 'height=400,width=600');	       
+	mywindow.document.write('</head><body>');
+	mywindow.document.write(response);
+	mywindow.document.write('</body></html>');
+	mywindow.document.close(); // necessary for IE >= 10
+	mywindow.focus(); // necessary for IE >= 10
+	mywindow.resizeTo(screen.width, screen.height);
+		}// /success function
+	
+
+
+  	$('#refresh').click(function(){
+  		$('#startDate').val('');
+  		$('#endDate').val('');  		
+  		
+  	})
+	  function printOrder(orderId ) {
+	$.ajax({
+		url: printurl,
+		method:"POST",
+		data: {orderId: orderId,table:'purchase'},
+		dataType: 'text',
+		success:function(response) {
+	var mywindow = window.open('', '', 'height=400,width=600');
+	mywindow.document.write('<html><head><title>Order Invoice</title>');        
+	mywindow.document.write('</head><body>');
+	mywindow.document.write(response);
+	mywindow.document.write('</body></html>');
+	mywindow.document.close(); // necessary for IE >= 10
+	mywindow.focus(); // necessary for IE >= 10
+	mywindow.resizeTo(screen.width, screen.height);
+		}// /success function
+	}); // /ajax function to fetch the printable order
+}
 
     });
 </script>

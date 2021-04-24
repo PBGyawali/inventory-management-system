@@ -74,7 +74,7 @@ $revenue_target=$stats-> get_revenue_target();
 			   <?php endif?>
 		<?php if($ims->is_admin()):	?>
 		<div class="row "> 
-                <div class="col-md-12">
+                <div class="col">
                     <div class="card shadow border-left-info py-2">
                         <div class="card-header text-center text-uppercase text-info"><strong>Total sales transaction Value achieved by each User (As on <?= '<span class="text-lowercase">'.date('jS').'</span>' .', '.date('F').', '.date('Y'); ?>)</strong></div>
                         <div class="card-body text-center" >
@@ -86,7 +86,7 @@ $revenue_target=$stats-> get_revenue_target();
 		<?php endif	?>
 		<?php if($ims->is_admin()):	?>
 		<div class="row "> 
-                <div class="col-md-12">
+                <div class="col">
                     <div class="card shadow border-left-info py-2">
                     <div class="card-header text-center text-uppercase text-info"><strong>Total purchase transaction Value achieved by each User (As on <?= '<span class="text-lowercase">'.date('jS').'</span>' .', '.date('F').', '.date('Y'); ?>)</strong></div>
                         <div class="card-body text-center" >
@@ -114,8 +114,6 @@ $revenue_target=$stats-> get_revenue_target();
 <script type="text/javascript" src="<?php echo JS_URL?>theme.js"></script>
 <?php include_once(INC.'footer.php');?>
 <script type="text/javascript">
-
-
 $(document).ready(function()
 {
 	$('[data-bs-chart]').each(function(index, elem) {
@@ -246,10 +244,7 @@ $(document).ready(function()
                             }
             });
         }
-    } 
-
-  
+    }   
 });
-
 </script>
 <script src= "<?php echo JS_URL .'progressbar_bootstrap.js'?>"></script>

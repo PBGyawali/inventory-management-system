@@ -4,14 +4,24 @@
     define('DB_USERNAME', 'root');
     define('DB_PASSWORD', 'root');
     define('DB_NAME', 'ims');
-
-
+          
+    if (isset($_SERVER['HTTP_HOST']))
+    {
+        $base_url = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off' ? 'https' : 'http';
+        $base_url .= '://'. $_SERVER['HTTP_HOST'];
+        //$base_url .= str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+    }    
+    else
+    {
+        $base_url = 'http://localhost';
+    } 
     date_default_timezone_set("Europe/Berlin");
-	 // define global constants      
-    define("BASE_URL", "http://localhost/ims/"); //defines the base url to start from in the server 
-    define("LOGIN_URL", "http://localhost/ims/index.php"); //defines the base url to start from in the server  
-    define("DASHBOARD_URL", "http://localhost/ims/dashboard.php");
-    define("SERVER_URL", BASE_URL."");    
+     // define global constants   
+     define("BASE_URL", $base_url.'/ims/' ); //defines the base url to start from in the server   
+   // define("BASE_URL", "http://localhost/ims/"); //defines the base url to start from in the server 
+    define("LOGIN_URL", BASE_URL."index.php"); //defines the base url to start from in the server  
+    define("DASHBOARD_URL", BASE_URL."dashboard.php");
+    define("SERVER_URL", BASE_URL."server/");    
     define("ASSETS_URL", BASE_URL."");
     define("CSS_URL", ASSETS_URL."css/");
     define("JS_URL", ASSETS_URL."js/");

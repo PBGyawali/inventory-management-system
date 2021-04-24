@@ -2,16 +2,13 @@
 //user.php
 include_once('config.php');
 include_once(INC.'init.php');
-
 if(!$ims->is_login())
     header("location:".$ims->login);
-
 if(!$ims->is_admin())
     header("location:".$ims->dashboard);
-
 include_once(INC.'header.php');
 ?>
-		<span id="alert_action"></span>
+	<span class="position-absolute text-center w-100"id="message" style="z-index:10;"></span>
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="card card-secondary">
@@ -75,14 +72,8 @@ include_once(INC.'header.php');
         			</div>
         		</div>
         		</form>
-
         	</div>
 		</div>
-	
-        		
-        		
-
-
 <script>
 $(document).ready(function(){
 	var url=$('#user_form').attr('action');
@@ -95,7 +86,7 @@ $(document).ready(function(){
 		$('#btn_action').val("Add");
 	});
 
-	var userdataTable = $('#user_data').DataTable({
+	var datatable = $('#user_data').DataTable({
 		"processing": true,
 		"serverSide": true,
 		"order": [],
@@ -131,9 +122,7 @@ $(document).ready(function(){
 			},
 			success:function(data)
 			{
-				$('#alert_action').html('<div class="text-center">'+data+'</div>');				
-				timeout();
-				userdataTable.ajax.reload();
+				showMessage(datatable,data)
 			}
 		})
 	});
@@ -170,15 +159,8 @@ $(document).ready(function(){
 			change="enable";		
 		var btn_action = "disable";		
 		var data={user_id:user_id, status:status, btn_action:btn_action};
-		disable(url,userdataTable,data,change+' the status');    
+		disable(url,datatable,data,change+' the status');    
   	});
-
-
-
-
 });
 </script>
-
-<?php
-include_once(INC."footer.php");
-?>
+<?php include_once(INC."footer.php");?>

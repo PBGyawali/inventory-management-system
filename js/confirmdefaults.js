@@ -1,6 +1,6 @@
 jconfirm.defaults = {   
     boxWidth: '30%',
-    useBootstrap: false,
+    useBootstrap:true,
     dragWindowBorder: false,
     icon: 'fa fa-warning',  
     closeIcon: true, // explicitly show the close icon

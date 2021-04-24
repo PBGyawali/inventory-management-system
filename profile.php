@@ -5,25 +5,17 @@ include_once('config.php');
 include_once(INC.'init.php');
 
 if(!$ims->is_login())
-{
     header("location:".$ims->login);
-}
-
-
-
+	include_once(CLASS_DIR.'file.php');
 include_once(INC.'header.php');
 $name = $row['user_name'];
 $email = $row['user_email'];
 $user_id = $row['user_id'];
 ?>
-
-
-
 	        <div class="col-xs-12 col-sm-9 col-md-8 col-lg-6 pt-3 m-auto">
 			<div class="row row-fluid">					
-			<div id="error_msg" class="alert alert-danger error_msg m-auto text-center col-md-12" role="alert" style="display:none"></div>	
-			<div id="success_msg" class="alert alert-success success_msg m-auto text-center" role="alert" style="display:none" ></div>	</div>
-			<span id="message"></span>	
+				</div>
+			<span class="position-absolute w-100 text-center" id="message"style="z-index:10"></span>	
 	            <div class="card">
 	            	<div class="card-header">
 	            		<div class="row">
@@ -72,7 +64,7 @@ $user_id = $row['user_id'];
 					          		<div class="row">
 						            	<label class="col-xs-12 col-sm-3 text-left pl-0 pr-1 ">New Password <span class="text-danger invisible">*</span></label>
 						            	<div class="col-xs-12 col-sm-9 pl-0">
-										<input type="password" name="user_password" id="user_new_password" class="form-control password" data-parsley-minlength="6" data-parsley-maxlength="16" data-parsley-trigger="on blur" />
+										<input type="password" name="user_password" id="user_new_password" class="form-control password"  data-parsley-length="[6, 16]"   data-parsley-trigger="on change" >
 						            	</div>
 						            </div>
 					          	</div>
@@ -113,21 +105,9 @@ $user_id = $row['user_id'];
 	</div>
 <script>
 $(document).ready(function(){
+	$('#edit_profile_form').parsley();
 	$('#edit_profile_form').on('submit', function(event){
 		event.preventDefault();
-		if($('#user_new_password').val() != '')
-		{
-			if($('#user_new_password').val() != $('#user_re_enter_password').val())
-			{
-				$('#error_password').html('<div class="alert alert-warning">Password did not Match</div>').show();			
-				return false;
-			}
-			else
-			{
-				$('#error_password').html('');
-			}		
-		}		
-		$('#user_re_enter_password').attr('required',false);
 		var data  = new FormData(this);
 		url=$('#edit_profile_form').attr('action');
 		var buttonvalue=$('#submit_button').html();
@@ -151,8 +131,7 @@ $(document).ready(function(){
 			},				
 			success:function(data)
 			{				
-				$('#message').html(data);
-				timeout();
+				showMessage('',data)
 			}
 		})
 	});

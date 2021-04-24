@@ -17,6 +17,7 @@
 		<script type="text/javascript" src="<?php echo JS_URL?>bootstrap.bundle.min.js"></script>
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
 		<script type="text/javascript" src="<?php echo JS_URL?>datatables.min.js"></script>		
+		<script type="text/javascript" src="<?php echo JS_URL?>dataTables.responsive.min.js"></script>	
 		<link rel="stylesheet" href="<?php echo CSS_URL?>datatables.min.css" >
 		<link rel="stylesheet" href="<?php echo CSS_URL.'parsley.css'?>" >		
 		<script type="text/javascript" src="<?php echo JS_URL.'parsley.min.js'?>"></script>		 		

@@ -10,19 +10,14 @@ elseif(isset($_GET["pdf"]) && isset($_GET['purchase_id']))
 	
 	include_once('config.php');
 	require_once (CLASS_DIR.'pdf.php');//this must alway be above the normal connection to the database
-	include_once(INC.'init.php');
-	
+	include_once(INC.'init.php');	
 	if(!$ims->is_login())
 	{
 		header('location:'.$ims->login);
 	}
-	$output = '';
-	$ims->query = "	SELECT * FROM company_table	";
-	$ims->execute();
-	$data=$ims->get_array();
-	$ims->query ="SELECT * FROM inventory_purchase WHERE inventory_purchase_id = ? LIMIT 1	";
-	$ims->execute(array( $_GET["purchase_id"]));
-	$row = $ims->get_array();
+	$output = '';	
+	$data=$ims->getArray( "company_table");
+	$row = $ims->getArray( "inventory_purchase",'inventory_purchase_id',$_GET["purchase_id"],'',1);
 	$output .='
 	<table width="100%" border="1"  cellpadding="5" cellspacing="0">
 		<tr>
@@ -75,10 +70,8 @@ elseif(isset($_GET["pdf"]) && isset($_GET['purchase_id']))
 					</tr>
 		';
 
-		
-		$ims->query ="SELECT * FROM inventory_purchase_product WHERE inventory_purchase_id = :inventory_purchase_id";
-		$ims->execute(	array(':inventory_purchase_id' =>  $_GET["purchase_id"]));
-		$product_result = $ims->statement_result();
+
+		$product_result = $ims->getAllArray('inventory_purchase_product','inventory_purchase_id',$_GET["purchase_id"]);
 		$count = 0;
 		$total = 0;
 		$total_actual_amount = 0;

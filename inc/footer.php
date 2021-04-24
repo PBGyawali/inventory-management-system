@@ -4,8 +4,7 @@
 <script>
 
 	function timeout()
-	{		
-		setTimeout(function(){
+	{		setTimeout(function(){
             $('.error, .message, .alert').slideUp();
 		}, 3000);
 		
@@ -13,7 +12,14 @@
 		$('#message,#alert_action,#form_message').html('');
 		}, 5000);
 	}
-
+	function showMessage(datatable=null,data)
+	{		$('#alert_action,#message').fadeIn().html(data);
+		if(datatable)
+			datatable.ajax.reload();
+		timeout();		
+		
+	}
+	
 	function disable(url,datatable,data,message="change the status"){	
 		//var data2 = {"btn_action":"delete"};
 		//var main_data = Object.assign({}, data, data2);
@@ -31,10 +37,8 @@
 									method:"POST",
 									data:data,                              
 									dataType:"JSON",
-									success:function(data){          
-										$('#alert_action,#message').fadeIn().html(data);
-										timeout();
-										datatable.ajax.reload();                               
+									success:function(response){   									
+										showMessage(datatable,response);                             
 									}
 								});
 							}
@@ -42,6 +46,6 @@
 					}
         });
     }
-
+	
 
 </script>

@@ -10,7 +10,7 @@ if(!$ims->is_admin())
 
 include_once(INC.'header.php');
 ?>
-                    <span id="message"></span>
+                    <span class="position-absolute text-center w-100"id="message" style="z-index:10;"></span>
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                         	<div class="row">
@@ -77,7 +77,7 @@ include_once(INC.'header.php');
 <script>
 $(document).ready(function(){
 var url=$('#tax_form').attr('action');
-	var dataTable = $('.tax_table').DataTable({
+	var datatable = $('.tax_table').DataTable({
 		"processing" : true,
 		"serverSide" : true,
 		"order" : [],
@@ -128,11 +128,9 @@ var url=$('#tax_form').attr('action');
 						$('#submit_button').val('Add');						
 					}
 					else{
-						$('#taxModal').modal('hide');
-						$('#message').html(data.success);
-						dataTable.ajax.reload();						
-					}
-					timeout();
+						$('#taxModal').modal('hide');						
+						showMessage(datatable,data.success);						
+					}				
 				}
 			})
 		}
@@ -167,13 +165,13 @@ var url=$('#tax_form').attr('action');
 			if(status == 'active')
 				next_status = 'inactive';			
 			var data={id:id, action:'change_status', status:status, next_status:next_status};
-			disable(url,dataTable,data);			
+			disable(url,datatable,data);			
 		});
 
 	$(document).on('click', '.delete_button', function(){		
     	var id = $(this).data('id');
 		var data={id:id, action:'delete'};
-		disable(url,dataTable,data,'delete the data');    
+		disable(url,datatable,data,'delete the data');    
   	});
 
 	

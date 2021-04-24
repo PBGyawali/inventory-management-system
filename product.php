@@ -10,7 +10,7 @@ if(!$ims->is_admin())
 
 include_once(INC.'header.php');
 ?>
-        <span id='alert_action'></span>
+        <span class="position-absolute w-100 text-center" id="message"style="z-index:10"></span>
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="card card-secondary">
@@ -148,7 +148,7 @@ eventurl='eventhandler.php';
 			}
 
     var url=$('#product_form').attr('action');
-    var productdataTable = $('#product_data').DataTable({
+    var datatable = $('#product_data').DataTable({
         "processing":true,
         "serverSide":true,
         "order":[],
@@ -236,11 +236,9 @@ eventurl='eventhandler.php';
             },
             success:function(data){
                 $('#product_form')[0].reset();
-                $('#productModal').modal('hide');
-                $('#alert_action').fadeIn().html(data);
+                $('#productModal').modal('hide');               
                 $('#span_tax_details').html('');               
-                timeout();
-                productdataTable.ajax.reload();
+                showMessage(datatable,data);
             }
         })
     });
@@ -295,7 +293,7 @@ eventurl='eventhandler.php';
         var status = $(this).data("status");
         var btn_action = 'delete';	
 		var data={product_id:product_id, status:status, btn_action:btn_action};
-		disable(url,productdataTable,data,change+' the status');    
+		disable(url,datatable,data);    
   	});
 
 });

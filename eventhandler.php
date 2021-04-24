@@ -1,7 +1,6 @@
 <?php
 include_once('config.php');
 include_once(INC.'init.php');
-include_once(CLASS_DIR.'graphs.php');
 $graphs=new graphs;
 
 if (isset($_POST['get_full_data'])) {

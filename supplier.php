@@ -12,7 +12,7 @@ if(!$ims->is_admin())
 
 include_once(INC.'header.php');
 ?>
-		<span id="alert_action"></span>
+		<span class="position-absolute text-center w-100"id="message" style="z-index:10;"></span>
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="card card-secondary">
@@ -95,7 +95,7 @@ $(document).ready(function(){
 		$('#btn_action').val("Add");
 	});
 
-	var supplierdataTable = $('#supplier_data').DataTable({
+	var datatable = $('#supplier_data').DataTable({
 		"processing": true,
 		"serverSide": true,
 		"order": [],
@@ -132,10 +132,8 @@ $(document).ready(function(){
 			{
 				$('#supplier_form')[0].reset();
 				$('#supplierModal').modal('hide');
-				$('#alert_action').fadeIn().html(data);
 				$('#action').attr('disabled', false);
-				timeout();
-				supplierdataTable.ajax.reload();
+				showMessage(datatable,data);
 			}
 		})
 	});
@@ -171,7 +169,7 @@ $(document).ready(function(){
 		var btn_action = "disable";			
     	var id = $(this).data('id');
 		var data={supplier_id:supplier_id, status:status, btn_action:btn_action};
-		disable(url,supplierdataTable,data,change+' the data');    
+		disable(url,datatable,data,change+' the data');    
   	});
 
 });

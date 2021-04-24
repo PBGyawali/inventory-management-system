@@ -11,7 +11,7 @@ if(!$ims->is_admin())
 include_once(INC.'header.php');
 ?>
 
-	<span id="alert_action"></span>
+	<span class="position-absolute w-100 text-center" id="message"style="z-index:10"></span>
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="card card-secondary">
@@ -118,10 +118,8 @@ $(document).ready(function(){
 					else{
 						$('#brand_form')[0].reset();
 						$('#brandModal').modal('hide');
-						$('#alert_action').fadeIn().html(data);
-						branddataTable.ajax.reload();						
-					}
-					timeout();
+						showMessage(datatable,data);						
+					}					
 				}
 		})
 
@@ -153,10 +151,10 @@ $(document).ready(function(){
 		var status  = $(this).data('status');
 		var btn_action = 'delete';	
 		var data={brand_id:brand_id, status:status, btn_action:btn_action};
-		disable(url,branddataTable,data,'change the status');    
+		disable(url,datatable,data,'change the status');    
   	});
 
-	var branddataTable = $('#brand_data').DataTable({
+	var datatable = $('#brand_data').DataTable({
 		"processing":true,
 		"serverSide":true,
 		"order":[],
